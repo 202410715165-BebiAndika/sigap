@@ -1,0 +1,106 @@
+[
+  {
+    "kode": "G1",
+    "deskripsi": "Kehadiran kuliah di bawah 75 persen",
+    "indikator": "kehadiran",
+    "kondisi": "<",
+    "ambang": 75.0,
+    "metrik": "kehadiran",
+    "cf_pakar": 0.6,
+    "tiers": [
+      {
+        "min": 70,
+        "max": 74.99,
+        "cf_user": 0.5
+      },
+      {
+        "min": 60,
+        "max": 69.99,
+        "cf_user": 0.8
+      },
+      {
+        "min": 0,
+        "max": 59.99,
+        "cf_user": 1.0
+      }
+    ]
+  },
+  {
+    "kode": "G3",
+    "deskripsi": "Keterlambatan mengumpulkan tugas >= 3 kali",
+    "indikator": "terlambat",
+    "kondisi": ">=",
+    "ambang": 3.0,
+    "metrik": "jumlah_terlambat",
+    "cf_pakar": 0.4,
+    "tiers": [
+      {
+        "min": 3,
+        "max": 4,
+        "cf_user": 0.6
+      },
+      {
+        "min": 5,
+        "max": 6,
+        "cf_user": 0.8
+      },
+      {
+        "min": 7,
+        "max": 99,
+        "cf_user": 1.0
+      }
+    ]
+  },
+  {
+    "kode": "G4",
+    "deskripsi": "IPS terakhir turun >= 0.5 dari semester sebelumnya",
+    "indikator": "ips_drop",
+    "kondisi": ">=",
+    "ambang": 0.5,
+    "metrik": "ips_drop",
+    "cf_pakar": 0.55,
+    "tiers": [
+      {
+        "min": 0.5,
+        "max": 0.79,
+        "cf_user": 0.5
+      },
+      {
+        "min": 0.8,
+        "max": 1.19,
+        "cf_user": 0.8
+      },
+      {
+        "min": 1.2,
+        "max": 4.0,
+        "cf_user": 1.0
+      }
+    ]
+  },
+  {
+    "kode": "G6",
+    "deskripsi": "Progress SKS di bawah target timeline kelulusan",
+    "indikator": "sks_progress_ratio",
+    "kondisi": "<",
+    "ambang": 0.85,
+    "metrik": "sks_progress_ratio",
+    "cf_pakar": 0.5,
+    "tiers": [
+      {
+        "min": 0.7,
+        "max": 0.849,
+        "cf_user": 0.5
+      },
+      {
+        "min": 0.5,
+        "max": 0.699,
+        "cf_user": 0.8
+      },
+      {
+        "min": 0.0,
+        "max": 0.499,
+        "cf_user": 1.0
+      }
+    ]
+  }
+]

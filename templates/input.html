@@ -1,0 +1,72 @@
+{% extends "_shell.html" %}{% set page = 'input' %}
+{% block title %}Input mahasiswa · SIGAP{% endblock %}
+{% block content %}
+<a href="/" class="breadcrumb-link">← Kembali ke ringkasan</a>
+<div class="form-layout"><aside class="form-intro"><div class="eyebrow">Data akademik</div><h1>Mulai dari<br>data yang tepat.</h1><p>Lengkapi data mahasiswa. SIGAP akan menghitung risiko akademik setelah data disimpan.</p><ol class="form-steps"><li><span>01</span>Identitas mahasiswa</li><li><span>02</span>Kondisi akademik</li><li><span>03</span>Progres SKS</li></ol><p class="subtle mt-4">Kolom bertanda * wajib diisi.</p></aside>
+<div><form method="post" action="/input-data" class="panel" data-busy-form>
+<section class="form-section" aria-labelledby="identity-title"><h2 id="identity-title">01 &nbsp; Identitas mahasiswa</h2><p class="section-description">Gunakan NIM yang sama untuk memperbarui data mahasiswa.</p><div class="row g-3">            <div class="col-md-6">
+              <label class="form-label" for="nim">NIM <span class="text-danger">*</span></label>
+              <input id="nim" type="text" class="form-control" name="nim" required placeholder="Contoh: MHS20230001" pattern="[A-Za-z0-9_\-]{1,20}" maxlength="20">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="nama">Nama <span class="text-danger">*</span></label>
+              <input id="nama" type="text" class="form-control" name="nama" maxlength="100" autocomplete="name" required>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="prodi">Prodi</label>
+              <select id="prodi" class="form-select" name="prodi">
+                <option>Teknik Informatika</option><option>Sistem Informasi</option><option>Ilmu Komputer</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="angkatan">Angkatan</label>
+              <input id="angkatan" type="number" class="form-control" name="angkatan" value="2024" min="2018" max="2100">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="semester_sekarang">Semester Sekarang</label>
+              <input id="semester_sekarang" type="number" class="form-control" name="semester_sekarang" value="1" min="1" max="14">
+              <div class="hint">Maksimal 14 semester</div>
+            </div>
+
+</div></section>
+<section class="form-section" aria-labelledby="academic-title"><h2 id="academic-title">02 &nbsp; Kondisi akademik</h2><p class="section-description">Kehadiran, tugas, dan perubahan IPS pada semester ini.</p><div class="row g-3">            <div class="col-md-4">
+              <label class="form-label" for="kehadiran">Kehadiran (%) <span class="text-danger">*</span></label>
+              <input id="kehadiran" type="number" class="form-control" name="kehadiran" step="0.1" required min="0" max="100" placeholder="0 - 100">
+              <div class="hint">Masukkan persentase kehadiran semester ini.</div>
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="nilai_tugas">Nilai Tugas (rata-rata)</label>
+              <input id="nilai_tugas" type="number" class="form-control" name="nilai_tugas" step="0.1" value="80" min="0" max="100">
+            </div>
+            <div class="col-md-4">
+              <label class="form-label" for="terlambat">Jumlah Terlambat</label>
+              <input id="terlambat" type="number" class="form-control" name="terlambat" value="0" min="0">
+              <div class="hint">Jumlah keterlambatan pengumpulan tugas.</div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="ips_sebelumnya">IPS Sebelumnya <span class="text-danger">*</span></label>
+              <input id="ips_sebelumnya" type="number" class="form-control" name="ips_sebelumnya" step="0.01" required min="0" max="4" placeholder="0 - 4">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="ips_terakhir">IPS Terakhir <span class="text-danger">*</span></label>
+              <input id="ips_terakhir" type="number" class="form-control" name="ips_terakhir" step="0.01" required min="0" max="4" placeholder="0 - 4">
+              <div class="hint">Gunakan skala IPS 0–4.</div>
+            </div>
+
+</div></section>
+<section class="form-section" aria-labelledby="credits-title"><h2 id="credits-title">03 &nbsp; Progres SKS</h2><p class="section-description">Isi SKS semester ini. Riwayat sebelumnya dihitung otomatis.</p><div class="row g-3">            <div class="col-md-6">
+              <label class="form-label" for="sks_diambil">SKS Diambil Semester Ini</label>
+              <input id="sks_diambil" type="number" class="form-control" name="sks_diambil" value="20" min="0" max="24">
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="sks_lulus">SKS Lulus Semester Ini</label>
+              <input id="sks_lulus" type="number" class="form-control" name="sks_lulus" value="20" min="0" max="24">
+              <div class="hint">Jika kurang dari SKS diambil = ada mengulang</div>
+            </div>
+
+</div></section>
+<div class="form-actions"><small>Data tersimpan dan analisis diperbarui otomatis.</small><div class="d-flex gap-2"><a href="/" class="btn btn-outline-secondary">Batal</a><button type="submit" class="btn btn-primary" data-busy-label="Menyimpan…">Simpan &amp; analisis →</button></div></div>
+</form>
+{% if mahasiswa %}<details class="form-existing"><summary>Lihat contoh NIM mahasiswa yang sudah terdaftar</summary>{% for m in mahasiswa[:10] %}<a href="/mahasiswa/{{ m.nim }}" class="badge bg-light text-decoration-none">{{ m.nim }}</a>{% endfor %}</details>{% endif %}
+</div></div>
+{% endblock %}

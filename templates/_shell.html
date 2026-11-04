@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+<meta name="theme-color" content="#145e52">
+<title>{% block title %}SIGAP · Pendampingan akademik{% endblock %}</title>
+<link rel="stylesheet" href="/static/vendor/bootstrap.min.css">
+<link rel="stylesheet" href="/static/sigap.css">
+{% block head %}{% endblock %}
+</head>
+<body>
+<a class="skip-link" href="#main-content">Lewati ke konten</a>
+<header class="site-header"><div class="app-container header-inner">
+<a class="brand" href="/" aria-label="SIGAP, halaman utama"><span class="brand-mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>SIGAP<small>Pendampingan akademik</small></span></a>
+<nav class="main-nav" aria-label="Navigasi utama">
+<a href="/" class="{% if page == 'dashboard' %}current{% endif %}" {% if page == 'dashboard' %}aria-current="page"{% endif %}>Ringkasan</a>
+{% if request.state.sigap_role != 'mahasiswa' %}<a href="/input-data" class="{% if page == 'input' %}current{% endif %}" {% if page == 'input' %}aria-current="page"{% endif %}>Input data</a>{% endif %}
+</nav>
+<span class="header-caption"><span class="status-dot"></span>Ruang akademik</span>
+</div></header>
+<main id="main-content" class="app-container main-content">{% block content %}{% endblock %}</main>
+<footer class="app-container site-footer"><span>SIGAP <span class="footer-dot">·</span> Sistem Intelijen Gejala Akademik</span><span>Mendampingi proses, mendukung progres.</span></footer>
+<script src="/static/sigap.js" defer></script>
+{% block scripts %}{% endblock %}
+</body></html>

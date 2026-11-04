@@ -1,0 +1,46 @@
+{% extends "_shell.html" %}{% set page = 'dashboard' %}
+{% block title %}Ringkasan akademik · SIGAP{% endblock %}
+{% block content %}
+<section class="hero" aria-labelledby="dashboard-title">
+<div><div class="eyebrow">Ringkasan akademik</div><h1 id="dashboard-title">Pantau lebih awal.<br>Dampingi lebih tepat.</h1><p>Kenali mahasiswa yang membutuhkan perhatian dan tentukan langkah pendampingan berikutnya.</p></div>
+<div class="hero-actions"><form method="post" action="/run-engine" data-busy-form><button type="submit" class="btn btn-outline-secondary" data-busy-label="Memperbarui…">↻ &nbsp;Perbarui analisis</button></form><a href="/input-data" class="btn btn-primary">＋ &nbsp;Input mahasiswa</a></div>
+</section>
+<section class="stat-grid" aria-label="Ringkasan kategori risiko">
+{% for label,count,note,icon,tone in [('Sudah dianalisis',statistik.total,'Mahasiswa pada periode aktif','◫',''),('Risiko tinggi',statistik.tinggi,'Prioritaskan pendampingan','!','red'),('Risiko sedang',statistik.sedang,'Pantau perkembangan','↗','amber'),('Risiko rendah',statistik.rendah,'Lanjutkan pemantauan rutin','✓','')] %}
+<div class="panel stat-card"><div class="stat-label">{{ label }}<span class="stat-icon {{ tone }}" aria-hidden="true">{{ icon }}</span></div><div class="stat-value">{{ count }}</div><div class="stat-note">{{ note }}</div></div>
+{% endfor %}
+</section>
+<div class="overview">
+<section class="panel panel-pad"><div class="section-top"><h2>Gambaran risiko akademik</h2><span class="subtle">Periode aktif</span></div>
+{% set total = statistik.total or 1 %}
+<div class="distribution" aria-hidden="true"><span class="high" style="width:{{ statistik.tinggi / total * 100 }}%"></span><span class="medium" style="width:{{ statistik.sedang / total * 100 }}%"></span><span class="low" style="width:{{ statistik.rendah / total * 100 }}%"></span></div>
+<div class="distribution-labels"><div><span class="legend-dot"></span>Tinggi<strong>{{ (statistik.tinggi / total * 100) | round(1) }}%</strong></div><div><span class="legend-dot medium"></span>Sedang<strong>{{ (statistik.sedang / total * 100) | round(1) }}%</strong></div><div><span class="legend-dot low"></span>Rendah<strong>{{ (statistik.rendah / total * 100) | round(1) }}%</strong></div></div>
+<details class="guide"><summary>Cara membaca kategori risiko</summary><p><b>Tinggi (≥70%):</b> perlu intervensi segera. <b>Sedang (40–&lt;70%):</b> perlu pemantauan ketat. <b>Rendah (&lt;40%):</b> pemantauan rutin. Skor CF merupakan peringatan dini berdasarkan gejala akademik, bukan kepastian tidak lulus atau prediksi DO.</p></details>
+</section>
+<section class="panel panel-pad"><div class="section-top"><h2>Prediksi kelulusan</h2><span class="subtle">Target 8 semester</span></div>
+<div class="forecast-list">
+{% for label,count,color in [('On track',statistik_prediksi.on_track,'#71a68c'),('Berisiko',statistik_prediksi.berisiko,'#d4af63'),('Berisiko tinggi',statistik_prediksi.tinggi,'#c66c6c')] %}
+<div class="forecast-item"><span class="label">{{ label }}</span><div class="track" aria-hidden="true"><i style="width:{{ count / total * 100 }}%;background:{{ color }}"></i></div><strong>{{ count }}</strong></div>
+{% endfor %}
+</div><p class="subtle mb-0 mt-3">Berdasarkan progres SKS. Gunakan bersama hasil risiko akademik untuk menentukan pendampingan.</p>
+</section></div>
+<section class="panel" aria-labelledby="student-list-title">
+<div class="table-heading"><div><h2 id="student-list-title">Daftar mahasiswa <span class="count-pill">{{ mahasiswa | length }}</span></h2><p>Diurutkan dari skor risiko tertinggi.</p></div><span class="subtle">Pilih mahasiswa untuk melihat rincian →</span></div>
+<form method="get" action="/" class="filter-bar" id="filter-form">
+<div class="search-wrap"><label for="student-search">Cari mahasiswa</label><span class="search-symbol" aria-hidden="true">⌕</span><input type="search" id="student-search" class="form-control" placeholder="Nama, NIM, atau program studi…" autocomplete="off"></div>
+<div class="filter-field"><label for="kategori">Risiko akademik</label><select class="form-select" id="kategori" name="kategori">{% for option in ['Semua','Tinggi','Sedang','Rendah'] %}<option value="{{ option }}" {% if filter_aktif == option %}selected{% endif %}>{{ 'Semua risiko' if option == 'Semua' else option }}</option>{% endfor %}</select></div>
+<div class="filter-field"><label for="prediksi">Prediksi kelulusan</label><select class="form-select" id="prediksi" name="prediksi">{% for value,label in [('Semua','Semua prediksi'),('OnTrack','On track'),('Berisiko','Berisiko'),('BerisikoTinggi','Berisiko tinggi')] %}<option value="{{ value }}" {% if filter_prediksi == value %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></div>
+<button class="btn btn-outline-secondary" type="submit">Terapkan</button>{% if filter_aktif != 'Semua' or filter_prediksi != 'Semua' %}<a href="/" class="btn btn-sm">Reset</a>{% endif %}
+</form>
+<div class="table-responsive"><table class="table table-hover align-middle" id="students-table"><caption class="visually-hidden">Mahasiswa dan hasil analisis risiko pada periode aktif</caption><thead><tr><th scope="col">Mahasiswa</th><th scope="col">Program studi</th><th scope="col" class="text-center">Semester</th><th scope="col">SKS lulus</th><th scope="col">Skor CF</th><th scope="col">Risiko</th><th scope="col">Prediksi</th><th scope="col"><span class="visually-hidden">Lihat detail</span></th></tr></thead><tbody>
+{% for m in mahasiswa %}
+<tr data-student-row><td><div class="student-name">{{ m.nama }}</div><div class="student-nim">{{ m.nim }}</div></td><td class="text-muted">{{ m.prodi }}</td><td class="text-center">{{ m.semester_sekarang }}</td><td>{{ m.total_sks or 0 }}<span class="subtle"> / 144</span><div class="mini-progress" aria-hidden="true"><i style="width:{{ [((m.total_sks or 0) / 144 * 100),100] | min }}%"></i></div></td><td class="score">{% if m.cf_gabungan is not none %}{{ (m.cf_gabungan * 100) | round(1) }}%{% else %}<span class="subtle">Belum dianalisis</span>{% endif %}</td><td>{% if m.kategori %}<span class="badge badge-{{ m.kategori | lower }}">{{ m.kategori }}</span>{% else %}<span class="subtle">—</span>{% endif %}</td><td>
+{% if m.status_prediksi %}{% if 'On Track' in m.status_prediksi or 'Memenuhi' in m.status_prediksi or m.status_prediksi == 'Lulus Tepat Waktu' %}<span class="badge bg-success" title="{{ m.status_prediksi }}">On track</span>{% elif 'Berisiko Tinggi' in m.status_prediksi or 'Tidak Lulus' in m.status_prediksi %}<span class="badge bg-danger" title="{{ m.status_prediksi }}">Berisiko tinggi</span>{% else %}<span class="badge bg-warning" title="{{ m.status_prediksi }}">Berisiko</span>{% endif %}{% else %}<span class="subtle">—</span>{% endif %}
+</td><td><a href="/mahasiswa/{{ m.nim }}" class="btn btn-sm btn-outline-secondary" aria-label="Lihat detail {{ m.nama }}">Detail&nbsp; ↗</a></td></tr>
+{% endfor %}
+</tbody></table></div>
+<div id="student-empty" class="empty-state" {% if mahasiswa %}hidden{% endif %}><strong>Belum ada mahasiswa yang ditampilkan.</strong><span>Coba ubah filter atau tambahkan data mahasiswa.</span></div>
+<div class="table-footer"><span id="student-range" aria-live="polite">{{ mahasiswa | length }} mahasiswa</span><div class="pagination-controls" id="student-pagination" hidden><button class="btn btn-sm btn-outline-secondary" type="button" id="previous-page" aria-label="Halaman sebelumnya">←</button><span id="page-label"></span><button class="btn btn-sm btn-outline-secondary" type="button" id="next-page" aria-label="Halaman berikutnya">→</button></div></div>
+</section>
+<noscript><p class="subtle mt-3">Pencarian dan pembagian halaman memerlukan JavaScript. Semua hasil filter tetap ditampilkan.</p></noscript>
+{% endblock %}
